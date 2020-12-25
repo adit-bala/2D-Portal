@@ -34,3 +34,6 @@ hs_err_pid*
 # Generated files
 .idea/**/contentModel.xml
 
+# out
+.out/
+
