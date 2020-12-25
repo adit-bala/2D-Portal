@@ -35,5 +35,4 @@ hs_err_pid*
 .idea/**/contentModel.xml
 
 # out
-.out/
-
+/out/
