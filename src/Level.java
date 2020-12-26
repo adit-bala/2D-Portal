@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -10,13 +12,12 @@ public class Level extends JPanel implements Runnable {
 	private static final long serialVersionUID = 1L;
 	private int FRAME_WIDTH;
 	private int FRAME_HEIGHT;
-	private final int INITIAL_X = -40;
-	private final int INITIAL_Y = -40;
 	private final int DELAY = 25;
+	private Player player;
 	private Block[][] map;
-
 	private Thread animator;
-	private int x, y;
+
+
 	
 	public Level(String path) {
 		try {
@@ -34,6 +35,9 @@ public class Level extends JPanel implements Runnable {
 						map[i][j] = new SolidBlock();
 					} else if (block == 'P') {
 						map[i][j] = new PortalBlock();
+					} else if (block == 'O') {
+						map[i][j] = new PlayerBlock();
+						player = new Player(j*Block.SIZE, i*Block.SIZE+20);
 					}
 				}
 			}
@@ -42,6 +46,61 @@ public class Level extends JPanel implements Runnable {
 			e.printStackTrace();
 		}
 		this.setPreferredSize(new Dimension(FRAME_WIDTH, FRAME_HEIGHT));
+		this.setFocusable(true);
+
+
+
+		addKeyListener(new TAdapter());
+	}
+
+	@Override
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+
+		drawMap(g);
+		drawPlayer(g);
+	}
+
+	private void drawMap(Graphics g) {
+		Graphics2D g2 = (Graphics2D) g;
+		for (int i = 0; i < map.length; i++) {
+			for (int j = 0; j < map[0].length; j++) {
+				Block block = map[i][j];
+				g2.setColor(block.getColor());
+				g2.fillRect(j * Block.SIZE, i * Block.SIZE, Block.SIZE, Block.SIZE);
+			}
+		}
+		Toolkit.getDefaultToolkit().sync();
+	}
+
+	private void drawPlayer(Graphics g) {
+
+		Graphics2D g2d = (Graphics2D) g;
+		g2d.setColor(Color.orange);
+		g2d.fillRect(player.getX(), player.getY(), player.getWidth(),player.getHeight());
+
+	}
+
+
+	private void step() {
+
+		player.move();
+
+		repaint(player.getX()-1, player.getY()-1,
+				player.getWidth()+2, player.getHeight()+2);
+	}
+
+	private class TAdapter extends KeyAdapter {
+
+		@Override
+		public void keyReleased(KeyEvent e) {
+			player.keyReleased(e);
+		}
+
+		@Override
+		public void keyPressed(KeyEvent e) {
+			player.keyPressed(e);
+		}
 	}
 
 	@Override
@@ -52,37 +111,8 @@ public class Level extends JPanel implements Runnable {
 		animator.start();
 	}
 
-	@Override
-	public void paintComponent(Graphics g) {
-		super.paintComponent(g);
-
-		drawMap(g);
-	}
-
-	private void drawMap(Graphics g) {
-		super.paintComponent(g);
-		Graphics2D g2 = (Graphics2D) g;
-		for (int i = 0; i < map.length; i++) {
-			for (int j = 0; j < map[0].length; j++) {
-				Block block = map[i][j];
-				g2.setColor(block.getColor());
-				g2.fillRect(j * Block.SIZE, i * Block.SIZE, Block.SIZE, Block.SIZE);
-			}
-		}
-		g.drawString("hello", x, y);
-		Toolkit.getDefaultToolkit().sync();
-	}
-
 	private void cycle() {
-
-		x += 1;
-		y += 1;
-
-		if (y > FRAME_HEIGHT) {
-
-			y = INITIAL_Y;
-			x = INITIAL_X;
-		}
+		step();
 	}
 
 	@Override

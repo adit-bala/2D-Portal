@@ -2,5 +2,5 @@ SSSSSSSSSSSSSSSS
 S..............S
 S..PSP.........S
 S..PSP.........S
-...PSP..........
+O..PSP..........
 SSSSSSSSSSSSSSSS
