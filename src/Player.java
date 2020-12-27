@@ -3,85 +3,100 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 
 public class Player {
-    private int dx;
-    private int dy;
-    private int x;
-    private int y;
-    private int w;
-    private int h;
-    private final int gravity = -10;
+    public final int SIZE = 20;
+    private final int margin = 1;
+    private int speedX;
+    private int speedY;
+    private int posX;
+    private int posY;
+    private final int gravity = -1;
+    private Timer timer;
 
-    public Player(int x, int y) {
-        this.x = x;
-        this.y = y;
-        w = 20;
-        h = 20;
+    public Player(int posX, int posY) {
+        this.posX = posX;
+        this.posY = posY;
     }
 
-    public void move() {
-        x += dx;
-        y += dy;
+    public void move(Block[][] map) {
+        /*Block playerBlock = getCurrBlock(map);*/
+        if(speedX > 0) {
+            Point currPoint = new Point(posX + speedX + SIZE, posY + SIZE);
+            if(!getCurrBlock(map, currPoint).isSolid()) {
+                /*System.out.println("Pos X:" +  posX + ", " + "Get X: " + (getCurrBlock(map, currPoint).getPixelCoords().getX()+Block.SIZE/2));*/
+                posX += speedX;
+
+            }
+        } else if (speedX < 0) {
+            Point currPoint = new Point(posX + speedX + margin, posY + SIZE);
+            if(!getCurrBlock(map, currPoint).isSolid()) {
+                posX += speedX;
+            }
+        }
+        if(speedY > 0) {
+            Point currPoint = new Point(posX + SIZE, posY + + speedY + SIZE);
+            /*System.out.println("Pos X:" +  posX + ", " + "Get X: " + (getCurrBlock(map, currPoint).getPixelCoords().getX()+Block.SIZE/2));*/
+            if(!getCurrBlock(map, currPoint).isSolid()) {
+                posY += speedY;
+
+            }
+        } else if (speedY < 0) {
+            Point currPoint = new Point(posX + SIZE, posY + + speedY + margin);
+            if(!getCurrBlock(map, currPoint).isSolid()) {
+                posY += speedY;
+            }
+        }
     }
 
-    public int getX() {
-
-        return x;
+    private Block getCurrBlock(Block[][] map, Point coord) {
+        for(int i=0; i<map.length; i++) {
+            for(int j=0; j<map[i].length; j++) {
+                Block currBlock = map[i][j];
+               /* System.out.println("X Position: " + currBlock.getPixelCoords().getX() + " Y Position: " + currBlock.getPixelCoords().getY());*/
+                if(coord.getX() >= currBlock.getPixelCoords().getX() && coord.getX() <=  currBlock.getPixelCoords().getX()+Block.SIZE && coord.getY() >= currBlock.getPixelCoords().getY() && coord.getY() <= currBlock.getPixelCoords().getY()+Block.SIZE) {
+                    return currBlock;
+                }
+            }
+        }
+        return null;
     }
 
-    public int getY() {
-
-        return y;
+    public int getPosX() {
+        return posX;
     }
 
-    public int getWidth() {
-
-        return w;
-    }
-
-    public int getHeight() {
-
-        return h;
+    public int getPosY() {
+        return posY;
     }
 
     public void keyPressed(KeyEvent e) {
-
         int key = e.getKeyCode();
-
         if (key == KeyEvent.VK_A) {
-            dx = -2;
+            speedX = -2;
         }
-
         if (key == KeyEvent.VK_D) {
-            dx = 2;
+            speedX = 2;
         }
-
         if (key == KeyEvent.VK_W) {
-            dy = -2;
+            speedY = -2;
         }
-
         if (key == KeyEvent.VK_S) {
-            dy = 2;
+            speedY = 2;
         }
     }
 
     public void keyReleased(KeyEvent e) {
-
         int key = e.getKeyCode();
-
         if (key == KeyEvent.VK_A) {
-            dx = 0;
+            speedX = 0;
         }
-
         if (key == KeyEvent.VK_D) {
-            dx = 0;
+            speedX = 0;
         }
-
         if (key == KeyEvent.VK_W) {
-            dy = 0;
+            speedY = 0;
         }
-
         if (key == KeyEvent.VK_S) {
-            dy = 0;
+            speedY = 0;
         }
     }
 

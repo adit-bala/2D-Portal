@@ -12,7 +12,7 @@ public class Level extends JPanel implements Runnable {
 	private static final long serialVersionUID = 1L;
 	private int FRAME_WIDTH;
 	private int FRAME_HEIGHT;
-	private final int DELAY = 25;
+	private final int DELAY = 10;
 	private Player player;
 	private Block[][] map;
 	private Thread animator;
@@ -30,13 +30,13 @@ public class Level extends JPanel implements Runnable {
 				for (int j = 0; j < row.length; j++) {
 					char block = row[j];
 					if (block == '.') {
-						map[i][j] = new SpaceBlock();
+						map[i][j] = new SpaceBlock(j, i);
 					} else if (block == 'S') {
-						map[i][j] = new SolidBlock();
+						map[i][j] = new SolidBlock(j, i);
 					} else if (block == 'P') {
-						map[i][j] = new PortalBlock();
+						map[i][j] = new PortalBlock(j, i);
 					} else if (block == 'O') {
-						map[i][j] = new PlayerBlock();
+						map[i][j] = new PlayerBlock(j, i);
 						player = new Player(j*Block.SIZE, i*Block.SIZE+20);
 					}
 				}
@@ -77,17 +77,17 @@ public class Level extends JPanel implements Runnable {
 
 		Graphics2D g2d = (Graphics2D) g;
 		g2d.setColor(Color.orange);
-		g2d.fillRect(player.getX(), player.getY(), player.getWidth(),player.getHeight());
+		g2d.fillRect(player.getPosX(), player.getPosY(), player.SIZE, player.SIZE);
 
 	}
 
 
 	private void step() {
 
-		player.move();
+		player.move(map);
 
-		repaint(player.getX()-1, player.getY()-1,
-				player.getWidth()+2, player.getHeight()+2);
+		repaint(player.getPosX()-1, player.getPosY()-1,
+				player.SIZE+2, player.SIZE+2);
 	}
 
 	private class TAdapter extends KeyAdapter {
