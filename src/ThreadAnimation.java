@@ -3,6 +3,8 @@ import java.awt.*;
 
 public class ThreadAnimation extends JFrame {
 
+    public static JFrame level;
+
     public ThreadAnimation() {
 
         initUI();
@@ -18,12 +20,15 @@ public class ThreadAnimation extends JFrame {
         setTitle("Portal");
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
     }
+
 
     public static void main(String[] args) {
 
         EventQueue.invokeLater(() -> {
-            JFrame level = new ThreadAnimation();
+            level = new ThreadAnimation();
+
             level.setVisible(true);
         });
     }

@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -12,7 +13,7 @@ public class Level extends JPanel implements Runnable {
 	private static final long serialVersionUID = 1L;
 	private int FRAME_WIDTH;
 	private int FRAME_HEIGHT;
-	private final int DELAY = 10;
+	private final int DELAY = 15;
 	private Player player;
 	private Block[][] map;
 	private Thread animator;
@@ -45,9 +46,9 @@ public class Level extends JPanel implements Runnable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		player.setMap(map);
 		this.setPreferredSize(new Dimension(FRAME_WIDTH, FRAME_HEIGHT));
 		this.setFocusable(true);
-
 
 
 		addKeyListener(new TAdapter());
@@ -84,7 +85,7 @@ public class Level extends JPanel implements Runnable {
 
 	private void step() {
 
-		player.move(map);
+		player.move();
 
 		repaint(player.getPosX()-1, player.getPosY()-1,
 				player.SIZE+2, player.SIZE+2);

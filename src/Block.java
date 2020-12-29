@@ -13,8 +13,6 @@ public abstract class Block {
 
     }
 
-
-
     public abstract Color getColor();
 
     public abstract boolean isSolid();
