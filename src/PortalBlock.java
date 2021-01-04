@@ -1,5 +1,7 @@
 import java.awt.Color;
-
+/*
+Block meant to be allowed to shoot Portals at, Solid
+*/
 public class PortalBlock extends Block{
 
 

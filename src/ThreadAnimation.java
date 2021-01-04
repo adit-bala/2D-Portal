@@ -1,6 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
-
+/*
+This class initializes the JFrame
+ */
 public class ThreadAnimation extends JFrame {
 
     public static JFrame level;
@@ -28,7 +30,6 @@ public class ThreadAnimation extends JFrame {
 
         EventQueue.invokeLater(() -> {
             level = new ThreadAnimation();
-
             level.setVisible(true);
         });
     }

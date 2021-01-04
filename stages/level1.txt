@@ -2,5 +2,5 @@ SSSSSSSSSSSSSSSS
 S..............S
 S..SSP.........S
 S..SSP.........S
-O..SSP..........
+O..SSP......S...
 SSSSSSSSSSSSSSSS

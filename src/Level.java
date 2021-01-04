@@ -2,24 +2,27 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
-
+/*
+Main class that stores every level and the thread
+ */
 public class Level extends JPanel implements Runnable {
-
+	//Java recommended this lel
 	private static final long serialVersionUID = 1L;
 	private int FRAME_WIDTH;
 	private int FRAME_HEIGHT;
+	//Delay in ms before each iteration of the level
 	private final int DELAY = 15;
 	private Player player;
 	private Block[][] map;
+	//Thread used to animate
 	private Thread animator;
 
 
-	
+	// constructs the map based on the text file and adds Key Adapters
 	public Level(String path) {
 		try {
 			List<String> lines = Files.readAllLines(Paths.get(path));
@@ -42,7 +45,6 @@ public class Level extends JPanel implements Runnable {
 					}
 				}
 			}
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -51,7 +53,7 @@ public class Level extends JPanel implements Runnable {
 		this.setFocusable(true);
 
 
-		addKeyListener(new TAdapter());
+		this.addKeyListener(new TAdapter());
 	}
 
 	@Override
@@ -62,6 +64,8 @@ public class Level extends JPanel implements Runnable {
 		drawPlayer(g);
 	}
 
+
+	// Draws the map every frame
 	private void drawMap(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
 		for (int i = 0; i < map.length; i++) {
@@ -71,26 +75,28 @@ public class Level extends JPanel implements Runnable {
 				g2.fillRect(j * Block.SIZE, i * Block.SIZE, Block.SIZE, Block.SIZE);
 			}
 		}
+		// So Java does not crash :`)
 		Toolkit.getDefaultToolkit().sync();
 	}
 
+	// Draws Player
 	private void drawPlayer(Graphics g) {
-
 		Graphics2D g2d = (Graphics2D) g;
 		g2d.setColor(Color.orange);
 		g2d.fillRect(player.getPosX(), player.getPosY(), player.SIZE, player.SIZE);
 
 	}
 
-
+	// Called every delay
 	private void step() {
-
 		player.move();
 
+		// Small optimization to paint around Player
 		repaint(player.getPosX()-1, player.getPosY()-1,
 				player.SIZE+2, player.SIZE+2);
 	}
 
+	// Class to use Player's KeyAdapter
 	private class TAdapter extends KeyAdapter {
 
 		@Override
@@ -104,6 +110,7 @@ public class Level extends JPanel implements Runnable {
 		}
 	}
 
+	// Thread tings
 	@Override
 	public void addNotify() {
 		super.addNotify();
@@ -112,10 +119,12 @@ public class Level extends JPanel implements Runnable {
 		animator.start();
 	}
 
+	// Thread calls this method every delay
 	private void cycle() {
 		step();
 	}
 
+	// Running Application
 	@Override
 	public void run() {
 

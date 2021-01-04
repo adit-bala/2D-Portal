@@ -1,9 +1,14 @@
 import java.awt.*;
 
+/*
+Abstract class Block that any type of entity extends, other than Player and the movable cube companion
+ */
 public abstract class Block {
 
     public static final int SIZE = 40;
+    // Coordinate of block in 2D Array
     private Point worldCoords;
+    // Coordinate of block in terms of Pixels
     private Point pixelCoords;
     private Color color;
 

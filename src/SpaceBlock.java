@@ -1,5 +1,7 @@
 import java.awt.Color;
-
+/*
+"Air Block", Not Solid
+*/
 public class SpaceBlock extends Block{
 
     SpaceBlock(int worldX, int worldY) {
