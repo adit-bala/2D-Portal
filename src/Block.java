@@ -22,6 +22,8 @@ public abstract class Block {
 
     public abstract boolean isSolid();
 
+    public abstract boolean isPortal();
+
     public Point getWorldCoords() {
         return worldCoords;
     }

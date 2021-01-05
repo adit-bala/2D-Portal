@@ -17,4 +17,9 @@ public class SpaceBlock extends Block{
     public boolean isSolid() {
         return false;
     }
+
+    @Override
+    public boolean isPortal() {
+        return true;
+    }
 }

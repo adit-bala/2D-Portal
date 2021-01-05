@@ -2,7 +2,7 @@ import java.awt.Color;
 /*
 Not the actual Player, just a block that allows the Player to be created, Not Solid
 */
-public class PlayerBlock extends Block{
+public class PlayerBlock extends Block {
 
     PlayerBlock(int worldX, int worldY) {
         super(worldX, worldY);
@@ -15,6 +15,11 @@ public class PlayerBlock extends Block{
 
     @Override
     public boolean isSolid() {
+        return false;
+    }
+
+    @Override
+    public boolean isPortal() {
         return false;
     }
 }

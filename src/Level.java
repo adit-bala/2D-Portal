@@ -2,6 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -19,7 +21,8 @@ public class Level extends JPanel implements Runnable {
 	private Player player;
 	private Block[][] map;
 	//Thread used to animate
-	private Thread animator;
+	private Thread level;
+	private Portal portal;
 
 
 	// constructs the map based on the text file and adds Key Adapters
@@ -42,6 +45,7 @@ public class Level extends JPanel implements Runnable {
 					} else if (block == 'O') {
 						map[i][j] = new PlayerBlock(j, i);
 						player = new Player(j*Block.SIZE, i*Block.SIZE+20);
+						portal.setPlayer(player);
 					}
 				}
 			}
@@ -49,11 +53,13 @@ public class Level extends JPanel implements Runnable {
 			e.printStackTrace();
 		}
 		player.setMap(map);
+		portal.setMap(map);
 		this.setPreferredSize(new Dimension(FRAME_WIDTH, FRAME_HEIGHT));
 		this.setFocusable(true);
 
 
-		this.addKeyListener(new TAdapter());
+		this.addKeyListener(new MoveAdapter());
+		this.addMouseListener(new PortalAdapter());
 	}
 
 	@Override
@@ -97,7 +103,7 @@ public class Level extends JPanel implements Runnable {
 	}
 
 	// Class to use Player's KeyAdapter
-	private class TAdapter extends KeyAdapter {
+	private class MoveAdapter extends KeyAdapter {
 
 		@Override
 		public void keyReleased(KeyEvent e) {
@@ -110,13 +116,25 @@ public class Level extends JPanel implements Runnable {
 		}
 	}
 
+	private class PortalAdapter extends MouseAdapter {
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			portal.mouseClicked(e);
+		}
+	}
+
+
+
 	// Thread tings
 	@Override
 	public void addNotify() {
 		super.addNotify();
 
-		animator = new Thread(this);
-		animator.start();
+		level = new Thread(this);
+		level.start();
+
+		portal = new Portal();
 	}
 
 	// Thread calls this method every delay

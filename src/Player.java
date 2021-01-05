@@ -75,7 +75,7 @@ public class Player {
     }
 
     // Get's the current block with the passed in Pixel Coordinates
-    private Block getCurrBlock(Block[][] map, Point coord) {
+    public static Block getCurrBlock(Block[][] map, Point coord) {
         for (int i = 0; i < map.length; i++) {
             for (int j = 0; j < map[i].length; j++) {
                 Block currBlock = map[i][j];
@@ -107,7 +107,7 @@ public class Player {
         if (key == KeyEvent.VK_W) {
             // Player only jumps when the block is not in the air
             if (!inAir()) {
-                velY = -22;
+                velY = -15;
             }
         }
     }

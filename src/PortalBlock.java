@@ -18,4 +18,9 @@ public class PortalBlock extends Block{
     public boolean isSolid() {
         return true;
     }
+
+    @Override
+    public boolean isPortal() {
+        return true;
+    }
 }
