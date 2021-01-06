@@ -2,17 +2,25 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
-public class Portal {
-    public final int SIZE = 10;
-    private final int DELAY = 15;
+public class Portal extends Thread {
+    public static final int SIZE = 5;
+    public static final int ARC_SIZE = 15;
+    public static boolean shootingOrange;
+    public static boolean shootingBlue;
+    private final int DELAY = 25;
     private Player player;
     private Block[][] map;
-    private int posX;
-    private int posY;
+
+    private int posXOrange;
+    private int posYOrange;
+    private int posXBlue;
+    private int posYBlue;
 
     public Portal() {
-
+        shootingOrange = false;
+        shootingBlue = false;
     }
+
 
     public void setPlayer(Player player) {
         this.player = player;
@@ -22,36 +30,88 @@ public class Portal {
         this.map = map;
     }
 
-    private void shootOrangePortal(int posX, int posY) {
-        if(validPortal(posX, posY)) {
+    private void shootOrangePortal() {
+        int slope = Math.floorDiv(posXOrange - player.getPosY(), posYOrange - player.getPosX());
+        System.out.println(posXOrange + ", " + posYOrange);
+        /*while(!Player.getCurrBlock(map, new Point(posXOrange, posYOrange)).isSolid()) {
+            posYOrange = (posXOrange*slope);
+            posXOrange++;
+        }*/
+    }
 
+    private void shootBluePortal() {
+
+    }
+
+
+    public int getPosXOrange() {
+        return posXOrange;
+    }
+
+    public int getPosXBlue() {
+        return posXBlue;
+    }
+
+    public int getPosYOrange() {
+        return posYOrange;
+    }
+
+    public int getPosYBlue() {
+        return posYBlue;
+    }
+
+    @Override
+    public void run() {
+
+        long beforeTime, timeDiff, sleep;
+
+        beforeTime = System.currentTimeMillis();
+
+        while (true) {
+
+            cycle();
+
+            timeDiff = System.currentTimeMillis() - beforeTime;
+            sleep = DELAY - timeDiff;
+
+            if (sleep < 0) {
+                sleep = 2;
+            }
+
+            try {
+                Thread.sleep(sleep);
+            } catch (InterruptedException e) {
+
+                System.out.println("ERROR WITH THREAD");
+            }
+
+            beforeTime = System.currentTimeMillis();
         }
     }
 
-
-    private void shootBluePortal(int posX, int posY) {
-
-    }
-
-    private boolean validPortal(int posX, int posY) {
-        Block currBlock;
-        do{
-            currBlock = Player.getCurrBlock(map, new Point(posX, posY));
-        } while (!currBlock.isSolid());
-        return currBlock.isPortal();
+    private void cycle() {
+        if(Portal.shootingOrange) {
+            shootOrangePortal();
+        } else if (Portal.shootingBlue) {
+            shootBluePortal();
+        }
     }
 
     public void mouseClicked(MouseEvent e) {
         int key = e.getButton();
         if(key == MouseEvent.BUTTON1) {
-            shootBluePortal(e.getX(), e.getY());
-            System.out.println("Left Click");
+            if(!shootingBlue) {
+                posXBlue = e.getX();
+                posYBlue = e.getY();
+                shootingBlue = true;
+            }
         }
         if(key == MouseEvent.BUTTON3) {
-            shootOrangePortal(e.getX(), e.getY());
-            System.out.println("Right Click");
+            if(!shootingOrange) {
+                posXOrange = e.getX();
+                posYOrange = e.getY();
+                shootingOrange = true;
+            }
         }
-
     }
-
 }

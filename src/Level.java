@@ -45,7 +45,7 @@ public class Level extends JPanel implements Runnable {
 					} else if (block == 'O') {
 						map[i][j] = new PlayerBlock(j, i);
 						player = new Player(j*Block.SIZE, i*Block.SIZE+20);
-						portal.setPlayer(player);
+
 					}
 				}
 			}
@@ -53,6 +53,10 @@ public class Level extends JPanel implements Runnable {
 			e.printStackTrace();
 		}
 		player.setMap(map);
+
+		portal = new Portal();
+		portal.start();
+		portal.setPlayer(player);
 		portal.setMap(map);
 		this.setPreferredSize(new Dimension(FRAME_WIDTH, FRAME_HEIGHT));
 		this.setFocusable(true);
@@ -68,6 +72,7 @@ public class Level extends JPanel implements Runnable {
 
 		drawMap(g);
 		drawPlayer(g);
+		drawPortals(g);
 	}
 
 
@@ -90,7 +95,20 @@ public class Level extends JPanel implements Runnable {
 		Graphics2D g2d = (Graphics2D) g;
 		g2d.setColor(Color.orange);
 		g2d.fillRect(player.getPosX(), player.getPosY(), player.SIZE, player.SIZE);
+	}
 
+	private void drawPortals(Graphics g) {
+		Graphics2D g2d = (Graphics2D) g;
+		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
+		if(Portal.shootingOrange) {
+			g2d.setColor(Color.orange);
+			g2d.fillRoundRect(portal.getPosXOrange(), portal.getPosYOrange(), portal.SIZE, portal.SIZE, portal.ARC_SIZE, portal.ARC_SIZE);
+		}
+		if (Portal.shootingBlue) {
+			g2d.setColor(Color.blue);
+			g2d.fillRoundRect(portal.getPosXBlue(), portal.getPosYBlue(), portal.SIZE, portal.SIZE, portal.ARC_SIZE, portal.ARC_SIZE);
+		}
 	}
 
 	// Called every delay
@@ -134,7 +152,7 @@ public class Level extends JPanel implements Runnable {
 		level = new Thread(this);
 		level.start();
 
-		portal = new Portal();
+
 	}
 
 	// Thread calls this method every delay
