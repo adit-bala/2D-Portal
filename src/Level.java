@@ -118,6 +118,14 @@ public class Level extends JPanel implements Runnable {
 		// Small optimization to paint around Player
 		repaint(player.getPosX()-1, player.getPosY()-1,
 				player.SIZE+2, player.SIZE+2);
+		if(Portal.shootingOrange) {
+			repaint(portal.getPosXOrange()-1, portal.getPosYOrange()-1,
+					portal.SIZE+2, portal.SIZE+2);
+		} else if (Portal.shootingBlue) {
+			repaint(portal.getPosXBlue()-1, portal.getPosYBlue()-1,
+					portal.SIZE+2, portal.SIZE+2);
+		}
+
 	}
 
 	// Class to use Player's KeyAdapter

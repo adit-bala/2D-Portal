@@ -13,12 +13,19 @@ public class Portal extends Thread {
 
     private int posXOrange;
     private int posYOrange;
+    private int velXOrange;
+    private int velYOrange;
+
     private int posXBlue;
     private int posYBlue;
+    private int velXBlue;
+    private int velYBlue;
 
     public Portal() {
         shootingOrange = false;
         shootingBlue = false;
+        velXOrange = 0;
+        velYOrange = 0;
     }
 
 
@@ -30,17 +37,102 @@ public class Portal extends Thread {
         this.map = map;
     }
 
+    private void initOrange() {
+        Point currPosition = new Point(player.getPosX(), player.getPosY());
+        Point mousePosition = new Point(posXOrange, posYOrange);
+
+        // X increments
+        if (currPosition.getX() > mousePosition.getX()) {
+            velXOrange = -5;
+        } else if (currPosition.getX() < mousePosition.getX()) {
+            velXOrange = 5;
+        } else if(currPosition.getX() == mousePosition.getX()) {
+            velXOrange = 0;
+        }
+
+        // Y increments
+        if (currPosition.getY() > mousePosition.getY()) {
+            velYOrange = -5;
+        } else if (currPosition.getY() < mousePosition.getY()) {
+            velYOrange = 5;
+        } else if(currPosition.getY() == mousePosition.getY()) {
+            velYOrange = 0;
+        }
+
+        posXOrange = player.getPosX();
+        posYOrange = player.getPosY();
+    }
+
+    private void initBlue() {
+        Point currPosition = new Point(player.getPosX() + player.SIZE/2, player.getPosY() + player.SIZE/2);
+        Point mousePosition = new Point(posXBlue, posYBlue);
+
+        // X increments
+        if (currPosition.getX() > mousePosition.getX()) {
+            velXBlue = -5;
+        } else if (currPosition.getX() < mousePosition.getX()) {
+            velXBlue = 5;
+        } else if(currPosition.getX() == mousePosition.getX()) {
+            velXBlue = 0;
+        }
+
+        // Y increments
+        if (currPosition.getY() > mousePosition.getY()) {
+            velYBlue = -5;
+        } else if (currPosition.getY() < mousePosition.getY()) {
+            velYBlue = 5;
+        } else if(currPosition.getY() == mousePosition.getY()) {
+            velYBlue = 0;
+        }
+
+        posXBlue = player.getPosX();
+        posYBlue = player.getPosY();
+    }
+
     private void shootOrangePortal() {
-        int slope = Math.floorDiv(posXOrange - player.getPosY(), posYOrange - player.getPosX());
-        System.out.println(posXOrange + ", " + posYOrange);
-        /*while(!Player.getCurrBlock(map, new Point(posXOrange, posYOrange)).isSolid()) {
-            posYOrange = (posXOrange*slope);
-            posXOrange++;
-        }*/
+        if(!Player.getCurrBlock(map, new Point(posXOrange, posYOrange)).isSolid()) {
+            posXOrange += velXOrange;
+            posYOrange += velYOrange;
+        } else {
+            this.shootingOrange = false;
+        }
     }
 
     private void shootBluePortal() {
+        if(!Player.getCurrBlock(map, new Point(posXBlue, posYBlue)).isSolid()) {
+            posXBlue += velXBlue;
+            posYBlue += velYBlue;
+        } else {
+            this.shootingBlue = false;
+        }
+    }
 
+    private void cycle() {
+        if(Portal.shootingOrange) {
+            shootOrangePortal();
+        } else if (Portal.shootingBlue) {
+            shootBluePortal();
+        }
+    }
+
+    public void mouseClicked(MouseEvent e) {
+        int key = e.getButton();
+        if(key == MouseEvent.BUTTON1) {
+            if(!shootingBlue) {
+                posXBlue = e.getX();
+                posYBlue = e.getY();
+                shootingBlue = true;
+                initBlue();
+            }
+        }
+        if(key == MouseEvent.BUTTON3) {
+            if(!shootingOrange) {
+                posXOrange = e.getX();
+                posYOrange = e.getY();
+                shootingOrange = true;
+                initOrange();
+            }
+        }
     }
 
 
@@ -86,32 +178,6 @@ public class Portal extends Thread {
             }
 
             beforeTime = System.currentTimeMillis();
-        }
-    }
-
-    private void cycle() {
-        if(Portal.shootingOrange) {
-            shootOrangePortal();
-        } else if (Portal.shootingBlue) {
-            shootBluePortal();
-        }
-    }
-
-    public void mouseClicked(MouseEvent e) {
-        int key = e.getButton();
-        if(key == MouseEvent.BUTTON1) {
-            if(!shootingBlue) {
-                posXBlue = e.getX();
-                posYBlue = e.getY();
-                shootingBlue = true;
-            }
-        }
-        if(key == MouseEvent.BUTTON3) {
-            if(!shootingOrange) {
-                posXOrange = e.getX();
-                posYOrange = e.getY();
-                shootingOrange = true;
-            }
         }
     }
 }
