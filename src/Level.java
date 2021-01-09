@@ -76,18 +76,6 @@ public class Level extends JPanel implements Runnable {
 		drawPortals(g);
 	}
 
-	private void drawPortals(Graphics g) {
-		if (Portal.drawOrangePortal) {
-			Graphics2D g2 = (Graphics2D) g;
-			g2.setColor(Color.orange);
-			g2.drawLine( (int) Portal.DrawOrangeBegin.getX(), (int) Portal.DrawOrangeBegin.getY(), (int) Portal.DrawOrangeEnd.getX(), (int) Portal.DrawOrangeEnd.getY());
-		} else if (Portal.drawBluePortal) {
-			Graphics2D g2 = (Graphics2D) g;
-			g2.setColor(Color.blue);
-		}
-	}
-
-
 	// Draws the map every frame
 	private void drawMap(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
@@ -105,7 +93,7 @@ public class Level extends JPanel implements Runnable {
 	// Draws Player
 	private void drawPlayer(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;
-		g2d.setColor(Color.orange);
+		g2d.setColor(new Color(56, 235, 190));
 		g2d.fillRect(player.getPosX(), player.getPosY(), player.SIZE, player.SIZE);
 	}
 
@@ -120,6 +108,21 @@ public class Level extends JPanel implements Runnable {
 		if (Portal.shootingBlue) {
 			g2d.setColor(Color.blue);
 			g2d.fillRoundRect(portal.getPosXBlue(), portal.getPosYBlue(), portal.SIZE, portal.SIZE, portal.ARC_SIZE, portal.ARC_SIZE);
+		}
+	}
+
+	private void drawPortals(Graphics g) {
+		if (Portal.drawOrangePortal) {
+			Graphics2D g2 = (Graphics2D) g;
+			g2.setColor(new Color(255, 150, 38));
+			g2.setStroke(new BasicStroke(2));
+			g2.drawLine( (int) Portal.DrawOrangeBegin.getX(), (int) Portal.DrawOrangeBegin.getY(), (int) Portal.DrawOrangeEnd.getX(), (int) Portal.DrawOrangeEnd.getY());
+		}
+		if (Portal.drawBluePortal) {
+			Graphics2D g2 = (Graphics2D) g;
+			g2.setStroke(new BasicStroke(2));
+			g2.setColor(Color.blue);
+			g2.drawLine( (int) Portal.DrawBlueBegin.getX(), (int) Portal.DrawBlueBegin.getY(), (int) Portal.DrawBlueEnd.getX(), (int) Portal.DrawBlueEnd.getY());
 		}
 	}
 

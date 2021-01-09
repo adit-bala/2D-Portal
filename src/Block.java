@@ -5,7 +5,7 @@ Abstract class Block that any type of entity extends, other than Player and the 
  */
 public abstract class Block {
 
-    public static final int SIZE = 40;
+    public static final int SIZE = 60;
     // Coordinate of block in 2D Array
     private Point worldCoords;
     // Coordinate of block in terms of Pixels

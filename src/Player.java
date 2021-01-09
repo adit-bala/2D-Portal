@@ -2,7 +2,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 
 public class Player {
-    public final int SIZE = 20;
+    public final int SIZE = 30;
     // Pixel coordinates (upper left corner of cube)
     private int posX;
     private int posY;
