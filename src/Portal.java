@@ -1,4 +1,3 @@
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
@@ -7,19 +6,31 @@ public class Portal extends Thread {
     public static final int ARC_SIZE = 15;
     public static boolean shootingOrange;
     public static boolean shootingBlue;
-    private final int DELAY = 25;
+    public static boolean drawOrangePortal;
+    public static boolean drawBluePortal;
+    private final int DELAY = 15;
     private Player player;
     private Block[][] map;
 
+    // Orange Portal
     private int posXOrange;
     private int posYOrange;
     private int velXOrange;
     private int velYOrange;
+    public static Point DrawOrangeBegin;
+    public static Point DrawOrangeEnd;
 
+    // Blue Portal
     private int posXBlue;
     private int posYBlue;
     private int velXBlue;
     private int velYBlue;
+    private Point DrawBlue;
+
+
+    enum Side {
+        TOP, BOTTOM, LEFT, RIGHT;
+    }
 
     public Portal() {
         shootingOrange = false;
@@ -90,21 +101,62 @@ public class Portal extends Thread {
     }
 
     private void shootOrangePortal() {
+        Block currBlock = Player.getCurrBlock(map, new Point(posXOrange, posYOrange));
         if(!Player.getCurrBlock(map, new Point(posXOrange, posYOrange)).isSolid()) {
             posXOrange += velXOrange;
             posYOrange += velYOrange;
         } else {
             this.shootingOrange = false;
+
+            findSide(currBlock.getPixelCoords(), new Point(posXOrange, posYOrange));
         }
     }
 
     private void shootBluePortal() {
-        if(!Player.getCurrBlock(map, new Point(posXBlue, posYBlue)).isSolid()) {
+        Block currBlock = Player.getCurrBlock(map, new Point(posXBlue, posYBlue));
+        if(!currBlock.isSolid()) {
             posXBlue += velXBlue;
             posYBlue += velYBlue;
         } else {
             this.shootingBlue = false;
         }
+    }
+
+    private void findSide(Point currBlock, Point point) {
+        // Top and Bottom
+        if(currBlock.getX() == point.getX()) {
+            drawOrangePortal(currBlock, Side.TOP);
+        } else if(currBlock.getX() + Block.SIZE == point.getX()) {
+            drawOrangePortal(currBlock, Side.BOTTOM);
+            System.out.println("check");
+        } else if(currBlock.getY() == point.getY()) {
+            drawOrangePortal(currBlock, Side.LEFT);
+        } else {
+            drawOrangePortal(currBlock, Side.RIGHT);
+        }
+        System.out.println(point.getX() + ", " + point.getY());
+    }
+
+    private void drawOrangePortal(Point currBlock, Side side) {
+        if (side == Side.TOP) {
+            DrawOrangeBegin = new Point((int) currBlock.getX(), (int) currBlock.getY());
+            DrawOrangeEnd =  new Point((int) currBlock.getX() + Block.SIZE, (int) currBlock.getY());
+        } else if (side == Side.BOTTOM) {
+            DrawOrangeBegin = new Point((int) currBlock.getX(), (int) currBlock.getY() + Block.SIZE);
+            DrawOrangeEnd =  new Point((int) currBlock.getX() + Block.SIZE, (int) currBlock.getY());
+            System.out.println(DrawOrangeBegin + ", " + DrawOrangeEnd);
+        } else if (side == Side.LEFT) {
+            DrawOrangeBegin = new Point((int) currBlock.getX(), (int) currBlock.getY());
+            DrawOrangeEnd =  new Point((int) currBlock.getX(), (int) currBlock.getY() + Block.SIZE);
+        } else {
+            DrawOrangeBegin = new Point((int) currBlock.getX() + Block.SIZE, (int) currBlock.getY());
+            DrawOrangeEnd =  new Point((int) currBlock.getX() + Block.SIZE, (int) currBlock.getY());
+        }
+        this.drawOrangePortal = true;
+    }
+
+    private void drawBluePortal(Point side) {
+
     }
 
     private void cycle() {

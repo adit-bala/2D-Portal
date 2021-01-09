@@ -72,7 +72,19 @@ public class Level extends JPanel implements Runnable {
 
 		drawMap(g);
 		drawPlayer(g);
+		drawPortalMovement(g);
 		drawPortals(g);
+	}
+
+	private void drawPortals(Graphics g) {
+		if (Portal.drawOrangePortal) {
+			Graphics2D g2 = (Graphics2D) g;
+			g2.setColor(Color.orange);
+			g2.drawLine( (int) Portal.DrawOrangeBegin.getX(), (int) Portal.DrawOrangeBegin.getY(), (int) Portal.DrawOrangeEnd.getX(), (int) Portal.DrawOrangeEnd.getY());
+		} else if (Portal.drawBluePortal) {
+			Graphics2D g2 = (Graphics2D) g;
+			g2.setColor(Color.blue);
+		}
 	}
 
 
@@ -97,7 +109,7 @@ public class Level extends JPanel implements Runnable {
 		g2d.fillRect(player.getPosX(), player.getPosY(), player.SIZE, player.SIZE);
 	}
 
-	private void drawPortals(Graphics g) {
+	private void drawPortalMovement(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
