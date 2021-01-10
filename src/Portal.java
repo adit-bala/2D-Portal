@@ -133,7 +133,7 @@ public class Portal extends Thread {
     }
 
     private void findSide(Point currBlock, Point point, String color) {
-        System.out.println(point.getX() + ", " + currBlock.getX());
+        //System.out.println(point.getX() + ", " + currBlock.getX());
         if(color.equals("O")){
             if(currBlock.getY() + margin == point.getY()) {
                 drawOrangePortal(currBlock, Side.TOP);
@@ -172,7 +172,11 @@ public class Portal extends Thread {
             DrawOrangeBegin = new Point((int) currBlock.getX() + Block.SIZE, (int) currBlock.getY());
             DrawOrangeEnd =  new Point((int) currBlock.getX() + Block.SIZE, (int) currBlock.getY() + Block.SIZE);
         }
-        this.drawOrangePortal = true;
+        if(!(DrawOrangeBegin.getX() == DrawBlueBegin.getX() && DrawOrangeBegin.getY() == DrawBlueBegin.getY())) {
+            this.drawOrangePortal = true;
+        } else {
+            this.drawOrangePortal = false;
+        }
     }
 
     private void drawBluePortal(Point currBlock, Side side) {
@@ -180,7 +184,6 @@ public class Portal extends Thread {
             DrawBlueBegin = new Point((int) currBlock.getX(), (int) currBlock.getY());
             DrawBlueEnd =  new Point((int) currBlock.getX() + Block.SIZE, (int) currBlock.getY());
         } else if (side == Side.BOTTOM) {
-            System.out.println("check");
             DrawBlueBegin = new Point((int) currBlock.getX(), (int) currBlock.getY() + Block.SIZE);
             DrawBlueEnd =  new Point((int) currBlock.getX() + Block.SIZE, (int) currBlock.getY()+ Block.SIZE);
         } else if (side == Side.LEFT) {
@@ -190,7 +193,12 @@ public class Portal extends Thread {
             DrawBlueBegin = new Point((int) currBlock.getX() + Block.SIZE, (int) currBlock.getY());
             DrawBlueEnd =  new Point((int) currBlock.getX() + Block.SIZE, (int) currBlock.getY() + Block.SIZE);
         }
-        this.drawBluePortal = true;
+
+        if(!(DrawBlueBegin.getX() == DrawOrangeBegin.getX() && DrawBlueBegin.getY() == DrawOrangeBegin.getY())) {
+            this.drawBluePortal = true;
+        } else {
+            this.drawBluePortal = false;
+        }
 
     }
 
