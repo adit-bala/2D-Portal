@@ -29,7 +29,9 @@ public class Level extends JPanel implements Runnable {
 	/* TODO: - Add Laser Block
 	 * 		 - Add Lever Block
 	 * 		 - Add Picking up Cube
+	 *
 	 */
+
 
 	public Level(String path) {
 		try {
