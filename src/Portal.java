@@ -16,23 +16,20 @@ public class Portal extends Thread {
     // Orange Portal
     private int posXOrange;
     private int posYOrange;
-    private int velXOrange;
-    private int velYOrange;
+    private double velXOrange;
+    private double velYOrange;
     public static Point DrawOrangeBegin;
     public static Point DrawOrangeEnd;
+    public static Side currOrangeSide;
 
     // Blue Portal
     private int posXBlue;
     private int posYBlue;
-    private int velXBlue;
-    private int velYBlue;
+    private double velXBlue;
+    private double velYBlue;
     public static Point DrawBlueBegin;
     public static Point DrawBlueEnd;
-
-
-    enum Side {
-        TOP, BOTTOM, LEFT, RIGHT;
-    }
+    public static Side currBlueSide;
 
     public Portal() {
         shootingOrange = false;
@@ -57,7 +54,6 @@ public class Portal extends Thread {
     private void initOrange() {
         Point currPosition = new Point(player.getPosX(), player.getPosY());
         Point mousePosition = new Point(posXOrange, posYOrange);
-
         // X increments
         if (currPosition.getX() > mousePosition.getX()) {
             velXOrange = -5;
@@ -114,7 +110,7 @@ public class Portal extends Thread {
         } else {
             this.shootingOrange = false;
             if(currBlock.isPortal()) {
-                findSide(currBlock.getPixelCoords(), new Point(posXOrange, posYOrange), "O");
+                findSide(currBlock.getPixelCoords(), new Point(posXOrange, posYOrange), 'O');
             }
         }
     }
@@ -127,14 +123,14 @@ public class Portal extends Thread {
         } else {
             this.shootingBlue = false;
             if(currBlock.isPortal()) {
-                findSide(currBlock.getPixelCoords(), new Point(posXBlue, posYBlue), "B");
+                findSide(currBlock.getPixelCoords(), new Point(posXBlue, posYBlue), 'B');
             }
         }
     }
 
-    private void findSide(Point currBlock, Point point, String color) {
+    private void findSide(Point currBlock, Point point, Character color) {
         //System.out.println(point.getX() + ", " + currBlock.getX());
-        if(color.equals("O")){
+        if(color == 'O'){
             if(currBlock.getY() + margin == point.getY()) {
                 drawOrangePortal(currBlock, Side.TOP);
             } else if (currBlock.getY() + Block.SIZE == point.getY()) {
@@ -174,8 +170,11 @@ public class Portal extends Thread {
         }
         if(!(DrawOrangeBegin.getX() == DrawBlueBegin.getX() && DrawOrangeBegin.getY() == DrawBlueBegin.getY())) {
             this.drawOrangePortal = true;
+            currOrangeSide = side;
         } else {
             this.drawOrangePortal = false;
+            DrawOrangeBegin.setLocation(0, 0);
+            DrawOrangeEnd.setLocation(0, 0);
         }
     }
 
@@ -196,8 +195,11 @@ public class Portal extends Thread {
 
         if(!(DrawBlueBegin.getX() == DrawOrangeBegin.getX() && DrawBlueBegin.getY() == DrawOrangeBegin.getY())) {
             this.drawBluePortal = true;
+            currBlueSide = side;
         } else {
             this.drawBluePortal = false;
+            DrawBlueBegin.setLocation(0, 0);
+            DrawBlueEnd.setLocation(0, 0);
         }
 
     }

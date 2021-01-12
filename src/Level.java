@@ -26,6 +26,11 @@ public class Level extends JPanel implements Runnable {
 
 
 	// constructs the map based on the text file and adds Key Adapters
+	/* TODO: - Add Laser Block
+	 * 		 - Add Lever Block
+	 * 		 - Add Picking up Cube
+	 */
+
 	public Level(String path) {
 		try {
 			List<String> lines = Files.readAllLines(Paths.get(path));
