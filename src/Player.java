@@ -21,6 +21,7 @@ public class Player {
         this.map = map;
     }
 
+    // FIXME: Entering Portal from Left and Right is not working
     public void move() {
         // Checking for block going right
         if (velX > 0) {
@@ -100,7 +101,7 @@ public class Player {
     private void teleport(Character portal) {
         // teleporting to Blue
         if(portal == 'B') {
-            if(Portal.drawBluePortal) {
+            if(Portal.DRAW_BLUE_PORTAL) {
                 if(Portal.currBlueSide == Side.TOP) {
                     posX = (int) Portal.DrawBlueBegin.getX();
                     posY = (int) Portal.DrawBlueBegin.getY() - SIZE - margin;
@@ -116,7 +117,7 @@ public class Player {
                 }
             }
         } else if(portal == 'O') {
-            if(Portal.drawOrangePortal) {
+            if(Portal.DRAW_ORANGE_PORTAL) {
                 if(Portal.currOrangeSide == Side.TOP) {
                     posX = (int) Portal.DrawOrangeBegin.getX();
                     posY = (int) Portal.DrawOrangeBegin.getY() - SIZE - margin;

@@ -108,24 +108,24 @@ public class Level extends JPanel implements Runnable {
 		Graphics2D g2d = (Graphics2D) g;
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
-		if(Portal.shootingOrange) {
+		if(Portal.SHOOTING_ORANGE) {
 			g2d.setColor(Color.orange);
 			g2d.fillRoundRect(portal.getPosXOrange(), portal.getPosYOrange(), portal.SIZE, portal.SIZE, portal.ARC_SIZE, portal.ARC_SIZE);
 		}
-		if (Portal.shootingBlue) {
+		if (Portal.SHOOTING_BLUE) {
 			g2d.setColor(Color.blue);
 			g2d.fillRoundRect(portal.getPosXBlue(), portal.getPosYBlue(), portal.SIZE, portal.SIZE, portal.ARC_SIZE, portal.ARC_SIZE);
 		}
 	}
 
 	private void drawPortals(Graphics g) {
-		if (Portal.drawOrangePortal) {
+		if (Portal.DRAW_ORANGE_PORTAL) {
 			Graphics2D g2 = (Graphics2D) g;
 			g2.setColor(new Color(255, 150, 38));
 			g2.setStroke(new BasicStroke(2));
 			g2.drawLine( (int) Portal.DrawOrangeBegin.getX(), (int) Portal.DrawOrangeBegin.getY(), (int) Portal.DrawOrangeEnd.getX(), (int) Portal.DrawOrangeEnd.getY());
 		}
-		if (Portal.drawBluePortal) {
+		if (Portal.DRAW_BLUE_PORTAL) {
 			Graphics2D g2 = (Graphics2D) g;
 			g2.setStroke(new BasicStroke(2));
 			g2.setColor(Color.blue);
@@ -140,10 +140,10 @@ public class Level extends JPanel implements Runnable {
 		// Small optimization to paint around Player
 		repaint(player.getPosX()-1, player.getPosY()-1,
 				player.SIZE+2, player.SIZE+2);
-		if(Portal.shootingOrange) {
+		if(Portal.SHOOTING_ORANGE) {
 			repaint(portal.getPosXOrange()-1, portal.getPosYOrange()-1,
 					portal.SIZE+2, portal.SIZE+2);
-		} else if (Portal.shootingBlue) {
+		} else if (Portal.SHOOTING_BLUE) {
 			repaint(portal.getPosXBlue()-1, portal.getPosYBlue()-1,
 					portal.SIZE+2, portal.SIZE+2);
 		}

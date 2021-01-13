@@ -3,11 +3,11 @@ import java.awt.*;
 /*
 This class initializes the JFrame
  */
-public class ThreadAnimation extends JFrame {
+public class Main extends JFrame {
 
     public static JFrame level;
 
-    public ThreadAnimation() {
+    public Main() {
 
         initUI();
     }
@@ -29,7 +29,7 @@ public class ThreadAnimation extends JFrame {
     public static void main(String[] args) {
 
         EventQueue.invokeLater(() -> {
-            level = new ThreadAnimation();
+            level = new Main();
             level.setVisible(true);
         });
     }

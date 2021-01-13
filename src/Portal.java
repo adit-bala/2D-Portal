@@ -4,10 +4,10 @@ import java.awt.event.MouseEvent;
 public class Portal extends Thread {
     public static final int SIZE = 5;
     public static final int ARC_SIZE = 15;
-    public static boolean shootingOrange;
-    public static boolean shootingBlue;
-    public static boolean drawOrangePortal;
-    public static boolean drawBluePortal;
+    public static boolean SHOOTING_ORANGE;
+    public static boolean SHOOTING_BLUE;
+    public static boolean DRAW_ORANGE_PORTAL;
+    public static boolean DRAW_BLUE_PORTAL;
     private final int DELAY = 15;
     private final int margin = 5;
     private Player player;
@@ -32,8 +32,8 @@ public class Portal extends Thread {
     public static Side currBlueSide;
 
     public Portal() {
-        shootingOrange = false;
-        shootingBlue = false;
+        SHOOTING_ORANGE = false;
+        SHOOTING_BLUE = false;
         velXOrange = 0;
         velYOrange = 0;
         DrawBlueBegin = new Point();
@@ -54,22 +54,25 @@ public class Portal extends Thread {
     private void initOrange() {
         Point currPosition = new Point(player.getPosX(), player.getPosY());
         Point mousePosition = new Point(posXOrange, posYOrange);
+        double slope = 1;
+        if ((mousePosition.getY() - currPosition.getY()) / (mousePosition.getX() - currPosition.getX()) != Double.POSITIVE_INFINITY || (mousePosition.getY() - currPosition.getY()) / (mousePosition.getX() - currPosition.getX()) != Double.NEGATIVE_INFINITY) {
+            slope = (mousePosition.getY() - currPosition.getY()) / (mousePosition.getX() - currPosition.getX());
+        }
         // X increments
         if (currPosition.getX() > mousePosition.getX()) {
             velXOrange = -5;
+            velYOrange = 5 * -(slope);
+            System.out.println(slope);
         } else if (currPosition.getX() < mousePosition.getX()) {
+            velYOrange = 5 * slope;
             velXOrange = 5;
-        } else if(currPosition.getX() == mousePosition.getX()) {
+        } else if (currPosition.getX() == mousePosition.getX()) {
+            if(currPosition.getY() < mousePosition.getY()) {
+                velYOrange = -1;
+            } else {
+                velYOrange = 1;
+            }
             velXOrange = 0;
-        }
-
-        // Y increments
-        if (currPosition.getY() > mousePosition.getY()) {
-            velYOrange = -5;
-        } else if (currPosition.getY() < mousePosition.getY()) {
-            velYOrange = 5;
-        } else if(currPosition.getY() == mousePosition.getY()) {
-            velYOrange = 0;
         }
 
         posXOrange = player.getPosX();
@@ -77,25 +80,27 @@ public class Portal extends Thread {
     }
 
     private void initBlue() {
-        Point currPosition = new Point(player.getPosX() + player.SIZE/2, player.getPosY() + player.SIZE/2);
+        Point currPosition = new Point(player.getPosX() + player.SIZE / 2, player.getPosY() + player.SIZE / 2);
         Point mousePosition = new Point(posXBlue, posYBlue);
-
+        double slope = 1;
+        if ((mousePosition.getY() - currPosition.getY()) / (mousePosition.getX() - currPosition.getX()) != Double.POSITIVE_INFINITY || (mousePosition.getY() - currPosition.getY()) / (mousePosition.getX() - currPosition.getX()) != Double.NEGATIVE_INFINITY) {
+            slope = (mousePosition.getY() - currPosition.getY()) / (mousePosition.getX() - currPosition.getX());
+        }
         // X increments
         if (currPosition.getX() > mousePosition.getX()) {
             velXBlue = -5;
+            velYBlue = 5 * -(slope);
+            System.out.println(slope);
         } else if (currPosition.getX() < mousePosition.getX()) {
+            velYBlue = 5 * slope;
             velXBlue = 5;
-        } else if(currPosition.getX() == mousePosition.getX()) {
+        } else if (currPosition.getX() == mousePosition.getX()) {
+            if(currPosition.getY() < mousePosition.getY()) {
+                velYBlue = -1;
+            } else {
+                velYBlue = 1;
+            }
             velXBlue = 0;
-        }
-
-        // Y increments
-        if (currPosition.getY() > mousePosition.getY()) {
-            velYBlue = -5;
-        } else if (currPosition.getY() < mousePosition.getY()) {
-            velYBlue = 5;
-        } else if(currPosition.getY() == mousePosition.getY()) {
-            velYBlue = 0;
         }
 
         posXBlue = player.getPosX();
@@ -104,12 +109,12 @@ public class Portal extends Thread {
 
     private void shootOrangePortal() {
         Block currBlock = Player.getCurrBlock(map, new Point(posXOrange, posYOrange));
-        if(!Player.getCurrBlock(map, new Point(posXOrange, posYOrange)).isSolid()) {
+        if (Player.getCurrBlock(map, new Point(posXOrange, posYOrange)) != null && !Player.getCurrBlock(map, new Point(posXOrange, posYOrange)).isSolid()) {
             posXOrange += velXOrange;
             posYOrange += velYOrange;
         } else {
-            this.shootingOrange = false;
-            if(currBlock.isPortal()) {
+            this.SHOOTING_ORANGE = false;
+            if (currBlock != null && currBlock.isPortal()) {
                 findSide(currBlock.getPixelCoords(), new Point(posXOrange, posYOrange), 'O');
             }
         }
@@ -117,12 +122,12 @@ public class Portal extends Thread {
 
     private void shootBluePortal() {
         Block currBlock = Player.getCurrBlock(map, new Point(posXBlue, posYBlue));
-        if(!currBlock.isSolid()) {
+        if (!currBlock.isSolid()) {
             posXBlue += velXBlue;
             posYBlue += velYBlue;
         } else {
-            this.shootingBlue = false;
-            if(currBlock.isPortal()) {
+            this.SHOOTING_BLUE = false;
+            if (currBlock.isPortal()) {
                 findSide(currBlock.getPixelCoords(), new Point(posXBlue, posYBlue), 'B');
             }
         }
@@ -130,24 +135,24 @@ public class Portal extends Thread {
 
     private void findSide(Point currBlock, Point point, Character color) {
         //System.out.println(point.getX() + ", " + currBlock.getX());
-        if(color == 'O'){
-            if(currBlock.getY() + margin == point.getY()) {
+        if (color == 'O') {
+            if (currBlock.getY() + margin == point.getY()) {
                 drawOrangePortal(currBlock, Side.TOP);
             } else if (currBlock.getY() + Block.SIZE == point.getY()) {
                 drawOrangePortal(currBlock, Side.BOTTOM);
             } else if (currBlock.getX() + margin >= point.getX()) {
                 drawOrangePortal(currBlock, Side.LEFT);
-            } else if (currBlock.getX() + Block.SIZE + margin >= point.getX()){
+            } else if (currBlock.getX() + Block.SIZE + margin >= point.getX()) {
                 drawOrangePortal(currBlock, Side.RIGHT);
             }
         } else {
-            if(currBlock.getY() + margin == point.getY()) {
+            if (currBlock.getY() + margin == point.getY()) {
                 drawBluePortal(currBlock, Side.TOP);
             } else if (currBlock.getY() + Block.SIZE == point.getY()) {
                 drawBluePortal(currBlock, Side.BOTTOM);
             } else if (currBlock.getX() + margin >= point.getX()) {
                 drawBluePortal(currBlock, Side.LEFT);
-            } else if (currBlock.getX() + Block.SIZE + margin >= point.getX()){
+            } else if (currBlock.getX() + Block.SIZE + margin >= point.getX()) {
                 drawBluePortal(currBlock, Side.RIGHT);
             }
         }
@@ -157,22 +162,22 @@ public class Portal extends Thread {
     private void drawOrangePortal(Point currBlock, Side side) {
         if (side == Side.TOP) {
             DrawOrangeBegin = new Point((int) currBlock.getX(), (int) currBlock.getY());
-            DrawOrangeEnd =  new Point((int) currBlock.getX() + Block.SIZE, (int) currBlock.getY());
+            DrawOrangeEnd = new Point((int) currBlock.getX() + Block.SIZE, (int) currBlock.getY());
         } else if (side == Side.BOTTOM) {
             DrawOrangeBegin = new Point((int) currBlock.getX(), (int) currBlock.getY() + Block.SIZE);
-            DrawOrangeEnd =  new Point((int) currBlock.getX() + Block.SIZE, (int) currBlock.getY()+ Block.SIZE);
+            DrawOrangeEnd = new Point((int) currBlock.getX() + Block.SIZE, (int) currBlock.getY() + Block.SIZE);
         } else if (side == Side.LEFT) {
             DrawOrangeBegin = new Point((int) currBlock.getX(), (int) currBlock.getY());
-            DrawOrangeEnd =  new Point((int) currBlock.getX(), (int) currBlock.getY() + Block.SIZE);
-        } else if (side == Side.RIGHT){
+            DrawOrangeEnd = new Point((int) currBlock.getX(), (int) currBlock.getY() + Block.SIZE);
+        } else if (side == Side.RIGHT) {
             DrawOrangeBegin = new Point((int) currBlock.getX() + Block.SIZE, (int) currBlock.getY());
-            DrawOrangeEnd =  new Point((int) currBlock.getX() + Block.SIZE, (int) currBlock.getY() + Block.SIZE);
+            DrawOrangeEnd = new Point((int) currBlock.getX() + Block.SIZE, (int) currBlock.getY() + Block.SIZE);
         }
-        if(!(DrawOrangeBegin.getX() == DrawBlueBegin.getX() && DrawOrangeBegin.getY() == DrawBlueBegin.getY())) {
-            this.drawOrangePortal = true;
+        if (!(DrawOrangeBegin.getX() == DrawBlueBegin.getX() && DrawOrangeBegin.getY() == DrawBlueBegin.getY())) {
+            this.DRAW_ORANGE_PORTAL = true;
             currOrangeSide = side;
         } else {
-            this.drawOrangePortal = false;
+            this.DRAW_ORANGE_PORTAL = false;
             DrawOrangeBegin.setLocation(0, 0);
             DrawOrangeEnd.setLocation(0, 0);
         }
@@ -181,23 +186,23 @@ public class Portal extends Thread {
     private void drawBluePortal(Point currBlock, Side side) {
         if (side == Side.TOP) {
             DrawBlueBegin = new Point((int) currBlock.getX(), (int) currBlock.getY());
-            DrawBlueEnd =  new Point((int) currBlock.getX() + Block.SIZE, (int) currBlock.getY());
+            DrawBlueEnd = new Point((int) currBlock.getX() + Block.SIZE, (int) currBlock.getY());
         } else if (side == Side.BOTTOM) {
             DrawBlueBegin = new Point((int) currBlock.getX(), (int) currBlock.getY() + Block.SIZE);
-            DrawBlueEnd =  new Point((int) currBlock.getX() + Block.SIZE, (int) currBlock.getY()+ Block.SIZE);
+            DrawBlueEnd = new Point((int) currBlock.getX() + Block.SIZE, (int) currBlock.getY() + Block.SIZE);
         } else if (side == Side.LEFT) {
             DrawBlueBegin = new Point((int) currBlock.getX(), (int) currBlock.getY());
-            DrawBlueEnd =  new Point((int) currBlock.getX(), (int) currBlock.getY() + Block.SIZE);
-        } else if (side == Side.RIGHT){
+            DrawBlueEnd = new Point((int) currBlock.getX(), (int) currBlock.getY() + Block.SIZE);
+        } else if (side == Side.RIGHT) {
             DrawBlueBegin = new Point((int) currBlock.getX() + Block.SIZE, (int) currBlock.getY());
-            DrawBlueEnd =  new Point((int) currBlock.getX() + Block.SIZE, (int) currBlock.getY() + Block.SIZE);
+            DrawBlueEnd = new Point((int) currBlock.getX() + Block.SIZE, (int) currBlock.getY() + Block.SIZE);
         }
 
-        if(!(DrawBlueBegin.getX() == DrawOrangeBegin.getX() && DrawBlueBegin.getY() == DrawOrangeBegin.getY())) {
-            this.drawBluePortal = true;
+        if (!(DrawBlueBegin.getX() == DrawOrangeBegin.getX() && DrawBlueBegin.getY() == DrawOrangeBegin.getY())) {
+            this.DRAW_BLUE_PORTAL = true;
             currBlueSide = side;
         } else {
-            this.drawBluePortal = false;
+            this.DRAW_BLUE_PORTAL = false;
             DrawBlueBegin.setLocation(0, 0);
             DrawBlueEnd.setLocation(0, 0);
         }
@@ -205,28 +210,28 @@ public class Portal extends Thread {
     }
 
     private void cycle() {
-        if(Portal.shootingOrange) {
+        if (Portal.SHOOTING_ORANGE) {
             shootOrangePortal();
-        } else if (Portal.shootingBlue) {
+        } else if (Portal.SHOOTING_BLUE) {
             shootBluePortal();
         }
     }
 
     public void mouseClicked(MouseEvent e) {
         int key = e.getButton();
-        if(key == MouseEvent.BUTTON1) {
-            if(!shootingBlue) {
+        if (key == MouseEvent.BUTTON1) {
+            if (!SHOOTING_BLUE) {
                 posXBlue = e.getX();
                 posYBlue = e.getY();
-                shootingBlue = true;
+                SHOOTING_BLUE = true;
                 initBlue();
             }
         }
-        if(key == MouseEvent.BUTTON3) {
-            if(!shootingOrange) {
+        if (key == MouseEvent.BUTTON3) {
+            if (!SHOOTING_ORANGE) {
                 posXOrange = e.getX();
                 posYOrange = e.getY();
-                shootingOrange = true;
+                SHOOTING_ORANGE = true;
                 initOrange();
             }
         }
