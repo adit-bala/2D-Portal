@@ -62,7 +62,6 @@ public class Portal extends Thread {
         if (currPosition.getX() > mousePosition.getX()) {
             velXOrange = -5;
             velYOrange = 5 * -(slope);
-            System.out.println(slope);
         } else if (currPosition.getX() < mousePosition.getX()) {
             velYOrange = 5 * slope;
             velXOrange = 5;
@@ -90,7 +89,7 @@ public class Portal extends Thread {
         if (currPosition.getX() > mousePosition.getX()) {
             velXBlue = -5;
             velYBlue = 5 * -(slope);
-            System.out.println(slope);
+
         } else if (currPosition.getX() < mousePosition.getX()) {
             velYBlue = 5 * slope;
             velXBlue = 5;
@@ -109,7 +108,7 @@ public class Portal extends Thread {
 
     private void shootOrangePortal() {
         Block currBlock = Player.getCurrBlock(map, new Point(posXOrange, posYOrange));
-        if (Player.getCurrBlock(map, new Point(posXOrange, posYOrange)) != null && !Player.getCurrBlock(map, new Point(posXOrange, posYOrange)).isSolid()) {
+        if (currBlock != null && Player.getCurrBlock(map, new Point(posXOrange, posYOrange)) != null && !Player.getCurrBlock(map, new Point(posXOrange, posYOrange)).isSolid()) {
             posXOrange += velXOrange;
             posYOrange += velYOrange;
         } else {
@@ -122,21 +121,21 @@ public class Portal extends Thread {
 
     private void shootBluePortal() {
         Block currBlock = Player.getCurrBlock(map, new Point(posXBlue, posYBlue));
-        if (!currBlock.isSolid()) {
+        if (currBlock != null && !currBlock.isSolid()) {
             posXBlue += velXBlue;
             posYBlue += velYBlue;
         } else {
             this.SHOOTING_BLUE = false;
-            if (currBlock.isPortal()) {
+            if (currBlock != null && currBlock.isPortal()) {
                 findSide(currBlock.getPixelCoords(), new Point(posXBlue, posYBlue), 'B');
             }
         }
     }
 
     private void findSide(Point currBlock, Point point, Character color) {
-        //System.out.println(point.getX() + ", " + currBlock.getX());
+        System.out.println(point.getY() + ", " + currBlock.getY());
         if (color == 'O') {
-            if (currBlock.getY() + margin == point.getY()) {
+            if (currBlock.getY() + margin >= point.getY()) {
                 drawOrangePortal(currBlock, Side.TOP);
             } else if (currBlock.getY() + Block.SIZE == point.getY()) {
                 drawOrangePortal(currBlock, Side.BOTTOM);
