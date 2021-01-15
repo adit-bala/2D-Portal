@@ -107,36 +107,98 @@ public class Player {
         if(portal == 'B') {
             if(Portal.DRAW_BLUE_PORTAL) {
                 if(Portal.currBlueSide == Side.TOP) {
+                    if(Portal.currOrangeSide == Side.LEFT) {
+                        rotate(Math.PI * 1.5);
+                    } else if(Portal.currOrangeSide == Side.RIGHT) {
+                        rotate(Math.PI * .5);
+                    } else if(Portal.currOrangeSide == Side.BOTTOM) {
+                        rotate(Math.PI);
+                    }
                     posX = (int) Portal.DrawBlueBegin.getX();
                     posY = (int) Portal.DrawBlueBegin.getY() - SIZE - MARGIN;
                 } else if (Portal.currBlueSide == Side.BOTTOM) {
+                    if(Portal.currOrangeSide == Side.LEFT) {
+                        rotate(Math.PI * .5);
+                    } else if(Portal.currOrangeSide == Side.RIGHT) {
+                        rotate(Math.PI * 1.5);
+                    } else if(Portal.currOrangeSide == Side.TOP) {
+                        rotate(Math.PI);
+                    }
                     posX = (int) Portal.DrawBlueBegin.getX();
                     posY = (int) Portal.DrawBlueBegin.getY() + MARGIN;
                 } else if(Portal.currBlueSide == Side.RIGHT) {
+                    if(Portal.currOrangeSide == Side.LEFT) {
+                        rotate(Math.PI);
+                    } else if(Portal.currOrangeSide == Side.BOTTOM) {
+                        rotate(Math.PI * .5);
+                    } else if(Portal.currOrangeSide == Side.TOP) {
+                        rotate(Math.PI * 1.5);
+                    }
                     posX = (int) Portal.DrawBlueBegin.getX() + MARGIN;
                     posY = (int) Portal.DrawBlueBegin.getY();
                 } else if(Portal.currBlueSide == Side.LEFT) {
+                    if(Portal.currOrangeSide == Side.RIGHT) {
+                        rotate(Math.PI);
+                    } else if(Portal.currOrangeSide == Side.BOTTOM) {
+                        rotate(Math.PI * 1.5);
+                    } else if(Portal.currOrangeSide == Side.TOP) {
+                        rotate(Math.PI * .5);
+                    }
                     posX = (int) Portal.DrawBlueBegin.getX() - SIZE - MARGIN;
                     posY = (int) Portal.DrawBlueBegin.getY();
                 }
             }
         } else if(portal == 'O') {
-            if(Portal.DRAW_ORANGE_PORTAL) {
-                if(Portal.currOrangeSide == Side.TOP) {
-                    posX = (int) Portal.DrawOrangeBegin.getX();
-                    posY = (int) Portal.DrawOrangeBegin.getY() - SIZE - MARGIN;
-                } else if (Portal.currOrangeSide == Side.BOTTOM) {
-                    posX = (int) Portal.DrawOrangeBegin.getX();
-                    posY = (int) Portal.DrawOrangeBegin.getY() + MARGIN;
-                } else if(Portal.currOrangeSide == Side.RIGHT) {
-                    posX = (int) Portal.DrawOrangeBegin.getX() + MARGIN;
-                    posY = (int) Portal.DrawOrangeBegin.getY();
-                } else if(Portal.currOrangeSide == Side.LEFT) {
-                    posX = (int) Portal.DrawOrangeBegin.getX() - SIZE - MARGIN;
-                    posY = (int) Portal.DrawOrangeBegin.getY();
+            if(Portal.currOrangeSide == Side.TOP) {
+                if(Portal.currBlueSide == Side.LEFT) {
+                    rotate(Math.PI * 1.5);
+                } else if(Portal.currBlueSide == Side.RIGHT) {
+                    rotate(Math.PI * .5);
+                } else if(Portal.currBlueSide == Side.BOTTOM) {
+                    rotate(Math.PI);
                 }
+                posX = (int) Portal.DrawOrangeBegin.getX();
+                posY = (int) Portal.DrawOrangeBegin.getY() - SIZE - MARGIN;
+            } else if (Portal.currOrangeSide == Side.BOTTOM) {
+                if(Portal.currBlueSide == Side.LEFT) {
+                    rotate(Math.PI * .5);
+                } else if(Portal.currBlueSide == Side.RIGHT) {
+                    rotate(Math.PI * 1.5);
+                } else if(Portal.currBlueSide == Side.TOP) {
+                    rotate(Math.PI);
+                }
+                posX = (int) Portal.DrawOrangeBegin.getX();
+                posY = (int) Portal.DrawOrangeBegin.getY() + MARGIN;
+            } else if(Portal.currOrangeSide == Side.RIGHT) {
+                if(Portal.currBlueSide == Side.LEFT) {
+                    rotate(Math.PI);
+                } else if(Portal.currBlueSide == Side.BOTTOM) {
+                    rotate(Math.PI * .5);
+                } else if(Portal.currBlueSide == Side.TOP) {
+                    rotate(Math.PI * 1.5);
+                }
+                posX = (int) Portal.DrawOrangeBegin.getX() + MARGIN;
+                posY = (int) Portal.DrawOrangeBegin.getY();
+            } else if(Portal.currOrangeSide == Side.LEFT) {
+                if(Portal.currBlueSide == Side.RIGHT) {
+                    rotate(Math.PI);
+                } else if(Portal.currBlueSide == Side.BOTTOM) {
+                    rotate(Math.PI * 1.5);
+                } else if(Portal.currBlueSide == Side.TOP) {
+                    rotate(Math.PI * .5);
+                }
+                posX = (int) Portal.DrawOrangeBegin.getX() - SIZE - MARGIN;
+                posY = (int) Portal.DrawOrangeBegin.getY();
             }
         }
+    }
+
+    private void rotate(double angle) {
+        double oldVelX = velX;
+        double oldVelY = velY;
+        velX = (oldVelX * Math.cos(angle)) + (oldVelY * Math.sin(angle));
+        velY = (-1 * oldVelX * Math.sin(angle)) + (oldVelY + Math.cos(angle));
+        velY *= -1;
     }
 
     // Checks below cube to see if the color is not white (or in space)
