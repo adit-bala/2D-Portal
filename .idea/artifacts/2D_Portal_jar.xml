@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="2D-Portal:jar">
+    <output-path>$PROJECT_DIR$</output-path>
+    <root id="archive" name="2D-Portal.jar">
+      <element id="module-output" name="2D-Portal" />
+    </root>
+  </artifact>
+</component>

@@ -21,7 +21,7 @@ public class ThreadAnimation extends JFrame {
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(() -> {
-			level = new ThreadAnimation(6);
+			level = new ThreadAnimation(1);
 			level.setVisible(true);
 		});
 	}
