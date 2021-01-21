@@ -1,25 +1,38 @@
 import java.awt.Color;
-/*
-Solid Block used as either a barrier or a immovable block, Solid
-*/
-public class SolidBlock extends Block{
 
-    SolidBlock(int worldX, int worldY) {
-        super(worldX, worldY);
-    }
+public class SolidBlock extends Block {
 
-    @Override
-    public Color getColor() {
-        return Color.black;
-    }
+	SolidBlock(int worldX, int worldY) {
+		super(worldX, worldY);
+	}
 
-    @Override
-    public boolean isSolid() {
-        return true;
-    }
+	@Override
+	public Color getColor() {
+		return Color.black;
+	}
 
-    @Override
-    public boolean isPortal() {
-        return false;
-    }
+	@Override
+	public boolean isSolid() {
+		return true;
+	}
+
+	@Override
+	public boolean isPortalBlock() {
+		return false;
+	}
+
+	@Override
+	public PortalWall[] getWalls() {
+		return null;
+	}
+
+	@Override
+	public boolean isSpikeBlock() {
+		return false;
+	}
+
+	@Override
+	public boolean isLevelBlock() {
+		return false;
+	}
 }

@@ -2,43 +2,32 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
-/*
-Main class that stores every level and the thread
- */
+
 public class Level extends JPanel implements Runnable {
-	//Java recommended this lel
+
 	private static final long serialVersionUID = 1L;
 	private int FRAME_WIDTH;
 	private int FRAME_HEIGHT;
-	//Delay in ms before each iteration of the level
 	private final int DELAY = 15;
 	private Player player;
 	private Block[][] map;
-	//Thread used to animate
-	private Thread level;
-	private Portal portal;
-
-
-	// constructs the map based on the text file and adds Key Adapters
-	/* TODO: - Add Laser Block
-	 * 		 - Add Lever Block
-	 * 		 - Add Picking up Cube
-	 *
-	 */
-
+	private ArrayList<PortalWall> walls = new ArrayList<PortalWall>();
+	private Thread animator;
 
 	public Level(String path) {
 		try {
 			List<String> lines = Files.readAllLines(Paths.get(path));
 			map = new Block[lines.size()][lines.get(0).length()];
-			FRAME_WIDTH = lines.get(0).length()*Block.SIZE;
-			FRAME_HEIGHT = lines.size()*Block.SIZE;
+			FRAME_WIDTH = lines.get(0).length() * Block.SIZE;
+			FRAME_HEIGHT = lines.size() * Block.SIZE;
 			for (int i = 0; i < lines.size(); i++) {
 				char[] row = lines.get(i).toCharArray();
 				for (int j = 0; j < row.length; j++) {
@@ -49,109 +38,69 @@ public class Level extends JPanel implements Runnable {
 						map[i][j] = new SolidBlock(j, i);
 					} else if (block == 'P') {
 						map[i][j] = new PortalBlock(j, i);
+						for (PortalWall wall : map[i][j].getWalls()) {
+							walls.add(wall);
+						}
 					} else if (block == 'O') {
 						map[i][j] = new PlayerBlock(j, i);
-						player = new Player(j*Block.SIZE, i*Block.SIZE+20);
-
+						player = new Player(j * Block.SIZE, i * Block.SIZE + 20);
+					} else if (block == 'X') {
+						map[i][j] = new SpikeBlock(j, i);
+					} else if (block == 'L') {
+						map[i][j] = new LevelBlock(j, i);
 					}
 				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		player.setMap(map);
-
-		portal = new Portal();
-		portal.start();
-		portal.setPlayer(player);
-		portal.setMap(map);
+		player.setMap(map, walls);
 		this.setPreferredSize(new Dimension(FRAME_WIDTH, FRAME_HEIGHT));
 		this.setFocusable(true);
-
-
-		this.addKeyListener(new MoveAdapter());
-		this.addMouseListener(new PortalAdapter());
+		addKeyListener(new KeyHandler());
+		addMouseListener(new MouseHandler());
+		addMouseMotionListener(new MouseMotionHandler());
 	}
 
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-
-		drawMap(g);
 		drawPlayer(g);
-		drawPortalMovement(g);
-		drawPortals(g);
+		drawMap(g);
 	}
 
-	// Draws the map every frame
 	private void drawMap(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
 		for (int i = 0; i < map.length; i++) {
 			for (int j = 0; j < map[0].length; j++) {
 				Block block = map[i][j];
 				g2.setColor(block.getColor());
-				g2.fillRect(j * Block.SIZE, i * Block.SIZE, Block.SIZE, Block.SIZE);
+				if (!(block instanceof SpaceBlock) && !(block instanceof PlayerBlock)) {
+					g2.fillRect(j * Block.SIZE, i * Block.SIZE, Block.SIZE, Block.SIZE);
+				}
 			}
 		}
-		// So Java does not crash :`)
+		for (PortalWall wall : walls) {
+			g2.setColor(wall.getColor());
+			g2.drawLine(wall.getA().x, wall.getA().y, wall.getB().x, wall.getB().y);
+		}
 		Toolkit.getDefaultToolkit().sync();
 	}
 
-	// Draws Player
 	private void drawPlayer(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;
-		g2d.setColor(new Color(56, 235, 190));
-		g2d.fillRect(player.getPosX(), player.getPosY(), player.SIZE, player.SIZE);
+		g2d.setColor(Color.lightGray);
+		g2d.fillRect(0, 0, FRAME_WIDTH, FRAME_HEIGHT);
+		g2d.setColor(Color.green);
+		g2d.fillRect((int) player.getXPos(), (int) player.getYPos(), player.SIZE, player.SIZE);
 	}
 
-	private void drawPortalMovement(Graphics g) {
-		Graphics2D g2d = (Graphics2D) g;
-		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
-		if(Portal.SHOOTING_ORANGE) {
-			g2d.setColor(Color.orange);
-			g2d.fillRoundRect(portal.getPosXOrange(), portal.getPosYOrange(), portal.SIZE, portal.SIZE, portal.ARC_SIZE, portal.ARC_SIZE);
-		}
-		if (Portal.SHOOTING_BLUE) {
-			g2d.setColor(Color.blue);
-			g2d.fillRoundRect(portal.getPosXBlue(), portal.getPosYBlue(), portal.SIZE, portal.SIZE, portal.ARC_SIZE, portal.ARC_SIZE);
-		}
-	}
-
-	private void drawPortals(Graphics g) {
-		if (Portal.DRAW_ORANGE_PORTAL) {
-			Graphics2D g2 = (Graphics2D) g;
-			g2.setColor(new Color(255, 150, 38));
-			g2.setStroke(new BasicStroke(2));
-			g2.drawLine( (int) Portal.DrawOrangeBegin.getX(), (int) Portal.DrawOrangeBegin.getY(), (int) Portal.DrawOrangeEnd.getX(), (int) Portal.DrawOrangeEnd.getY());
-		}
-		if (Portal.DRAW_BLUE_PORTAL) {
-			Graphics2D g2 = (Graphics2D) g;
-			g2.setStroke(new BasicStroke(2));
-			g2.setColor(Color.blue);
-			g2.drawLine( (int) Portal.DrawBlueBegin.getX(), (int) Portal.DrawBlueBegin.getY(), (int) Portal.DrawBlueEnd.getX(), (int) Portal.DrawBlueEnd.getY());
-		}
-	}
-
-	// Called every delay
 	private void step() {
 		player.move();
-
-		// Small optimization to paint around Player
-		repaint(player.getPosX()-1, player.getPosY()-1,
-				player.SIZE+2, player.SIZE+2);
-		if(Portal.SHOOTING_ORANGE) {
-			repaint(portal.getPosXOrange()-1, portal.getPosYOrange()-1,
-					portal.SIZE+2, portal.SIZE+2);
-		} else if (Portal.SHOOTING_BLUE) {
-			repaint(portal.getPosXBlue()-1, portal.getPosYBlue()-1,
-					portal.SIZE+2, portal.SIZE+2);
-		}
-
+		repaint((int) player.getXPos(), (int) player.getYPos(), player.SIZE, player.SIZE);
 	}
 
-	// Class to use Player's KeyAdapter
-	private class MoveAdapter extends KeyAdapter {
+	private class KeyHandler extends KeyAdapter {
 
 		@Override
 		public void keyReleased(KeyEvent e) {
@@ -164,64 +113,80 @@ public class Level extends JPanel implements Runnable {
 		}
 	}
 
-	private class PortalAdapter extends MouseAdapter {
+	private class MouseHandler implements MouseListener {
+		@Override
+		public void mouseClicked(MouseEvent arg0) {
+			// TODO Auto-generated method stub
+
+		}
 
 		@Override
-		public void mouseClicked(MouseEvent e) {
-			portal.mouseClicked(e);
+		public void mouseEntered(MouseEvent arg0) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void mouseExited(MouseEvent arg0) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			player.mouseClicked(e);
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent arg0) {
+			// TODO Auto-generated method stub
+
 		}
 	}
 
+	private class MouseMotionHandler implements MouseMotionListener {
+		@Override
+		public void mouseDragged(MouseEvent e) {
+			// TODO Auto-generated method stub
 
+		}
 
-	// Thread tings
+		@Override
+		public void mouseMoved(MouseEvent e) {
+			player.mouseMoved(e);
+		}
+	}
+
 	@Override
 	public void addNotify() {
 		super.addNotify();
-
-		level = new Thread(this);
-		level.start();
-
-
+		animator = new Thread(this);
+		animator.start();
 	}
 
-	// Thread calls this method every delay
 	private void cycle() {
 		step();
 	}
 
-	// Running Application
 	@Override
 	public void run() {
-
 		long beforeTime, timeDiff, sleep;
-
 		beforeTime = System.currentTimeMillis();
-
 		while (true) {
-
 			cycle();
 			repaint();
-
 			timeDiff = System.currentTimeMillis() - beforeTime;
 			sleep = DELAY - timeDiff;
-
 			if (sleep < 0) {
 				sleep = 2;
 			}
-
 			try {
 				Thread.sleep(sleep);
 			} catch (InterruptedException e) {
-
 				String msg = String.format("Thread interrupted: %s", e.getMessage());
-
-				JOptionPane.showMessageDialog(this, msg, "Error",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
 			}
-
 			beforeTime = System.currentTimeMillis();
 		}
 	}
 }
-
