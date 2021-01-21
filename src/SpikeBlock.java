@@ -1,18 +1,23 @@
 import java.awt.Color;
 
-public class PlayerBlock extends Block {
+public class SpikeBlock extends Block {
 
-	PlayerBlock(int worldX, int worldY) {
+	SpikeBlock(int worldX, int worldY) {
 		super(worldX, worldY);
 	}
 
 	@Override
 	public Color getColor() {
-		return Color.lightGray;
+		return Color.red;
 	}
 
 	@Override
 	public boolean isSolid() {
+		return true;
+	}
+
+	@Override
+	public boolean isPortalBlock() {
 		return false;
 	}
 
@@ -22,18 +27,12 @@ public class PlayerBlock extends Block {
 	}
 
 	@Override
-	public boolean isPortalBlock() {
-		return false;
-	}
-
-	@Override
 	public boolean isSpikeBlock() {
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean isLevelBlock() {
 		return false;
 	}
-
 }

@@ -1,24 +1,19 @@
 import java.awt.Color;
 
-public class PlayerBlock extends Block {
+public class LevelBlock extends Block {
 
-	PlayerBlock(int worldX, int worldY) {
+	LevelBlock(int worldX, int worldY) {
 		super(worldX, worldY);
 	}
 
 	@Override
 	public Color getColor() {
-		return Color.lightGray;
+		return Color.white;
 	}
 
 	@Override
 	public boolean isSolid() {
-		return false;
-	}
-
-	@Override
-	public PortalWall[] getWalls() {
-		return null;
+		return true;
 	}
 
 	@Override
@@ -27,13 +22,17 @@ public class PlayerBlock extends Block {
 	}
 
 	@Override
-	public boolean isSpikeBlock() {
+	public PortalWall[] getWalls() {
+		return null;
+	}
+	
+	@Override
+	public boolean isSpikeBlock(){
 		return false;
 	}
-
+	
 	@Override
 	public boolean isLevelBlock() {
-		return false;
+		return true;
 	}
-
 }
