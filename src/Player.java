@@ -18,12 +18,16 @@ public class Player {
 	private boolean inPortalOnRight = false, inPortalOnLeft = false, inPortalAbove = false, inPortalBelow = false,
 			onPortalGround = false, teleported = false;
 	private PortalWall currentPortal = null;
-	private int startX = 85;
-	private int startY = 760;
+	private int startX;
+	private int startY;
+	private Level level;
 
-	public Player(int xPos, int yPos) {
+	public Player(int xPos, int yPos, Level level) {
 		this.xPos = xPos;
 		this.yPos = yPos;
+		this.startX = xPos;
+		this.startY = yPos;
+		this.level = level;
 	}
 
 	public void setMap(Block[][] map, ArrayList<PortalWall> walls) {
@@ -148,7 +152,7 @@ public class Player {
 					} else if (levelBlock(topRight, bottomRight)) {
 						xPos = startX;
 						yPos = startY;
-						System.out.println("NEXTLEVEL");
+						level.nextLevel();
 					} else {
 						if (!canMoveThrough(topRight) && !inPortalOnRight) {
 							xPos = topRight.getPixelCoords().x - SIZE;
@@ -396,10 +400,10 @@ public class Player {
 				searching = false;
 			} else {
 				currentBlock = getBlockAt(new Point(x, y));
-				if (currentBlock.isPortalBlock()) {
+				if (currentBlock!= null && currentBlock.isPortalBlock()) {
 					searching = false;
 					portalBlock = currentBlock;
-				} else if (currentBlock.isSolid()) {
+				} else if (currentBlock!= null && currentBlock.isSolid()) {
 					searching = false;
 				}
 			}

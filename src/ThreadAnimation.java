@@ -4,13 +4,14 @@ import java.awt.*;
 public class ThreadAnimation extends JFrame {
 
 	public static JFrame level;
+	private int x;
 
-	public ThreadAnimation() {
-		initUI();
+	public ThreadAnimation(int x) {
+		initUI(x);
 	}
 
-	private void initUI() {
-		add(new Level("stages/level1.txt"));
+	private void initUI(int x) {
+		add(new Level("stages/level" + x +".txt", x));
 		setResizable(false);
 		pack();
 		setTitle("Portal");
@@ -20,7 +21,7 @@ public class ThreadAnimation extends JFrame {
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(() -> {
-			level = new ThreadAnimation();
+			level = new ThreadAnimation(6);
 			level.setVisible(true);
 		});
 	}
